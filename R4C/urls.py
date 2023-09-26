@@ -16,6 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from django.urls import include
+from rest_framework.routers import DefaultRouter
+from robots.views import RobotViewSet
+
+
+router = DefaultRouter()
+router.register(r'robots', RobotViewSet)
+
 urlpatterns = [
+    path('', include(router.urls)),
     path('admin/', admin.site.urls),
 ]

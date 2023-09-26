@@ -3,15 +3,17 @@ import json
 from django.test import TestCase
 
 # Create your tests here.
-from rest_framework.test import APIClient, APITestCase
 # from django.urls import reverse
 from .models import Robot
-# from .serializers import RobotSerializer
+from django.test import Client, TestCase
+from .models import Robot
+import json
+
 
 
 class RobotTestCase(TestCase):
     def setup(self):
-        self.client = APIClient()
+        self.client = Client()
         self.robot_data = {"model": "R2", "version": "D2", "created": "2022-12-31 23:59:59"}
 
     def test_api_can_create_a_robot(self):

@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from robots.views import download_summary
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path("download-summary/", download_summary, name="download_summary"),
+    path('download-summary/', views.download_summary, name='download-summary'),
 ]

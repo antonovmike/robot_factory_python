@@ -6,7 +6,7 @@ import pyexcel as pe
 # import pyexcel_xlsx
 
 
-def download_summary(request):
+def download_summary():
     # Get the production statistics for the robots
     # You can customize this part based on your data structure and logic
     robot_statistics = [

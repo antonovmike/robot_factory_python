@@ -14,12 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from robots.views import download_summary
 
 
 urlpatterns = [
+    path('robots/', include('robots.urls')),
     path('admin/', admin.site.urls),
     # path("download-summary/", download_summary, name="download_summary"),
-    path('download-summary/', views.download_summary, name='download-summary'),
+    # path('download-summary/', views.download_summary, name='download-summary'),
+    # path('download-summary/', RobotView.as_view(), name='download-summary'),
 ]

@@ -35,23 +35,64 @@ def create_robot(request):
     else:
         return HttpResponse(status=405)
 
+
+robot_statistics = [
+    {"model": "R2", "version": "A1", "count": 11},
+    {"model": "R2", "version": "B2", "count": 22},
+    {"model": "R2", "version": "C3", "count": 33},
+    {"model": "S1", "version": "D4", "count": 44},
+    {"model": "S1", "version": "E5", "count": 55},
+    {"model": "S1", "version": "F6", "count": 66},
+    {"model": "R2", "version": "G0", "count": 1},
+]
+
+
 def download_report(request):
     # Создаем новую книгу Excel
     wb = Workbook()
+    wb.remove(wb.active)
+    headings = ("Модель", "Версия", "Количество за неделю")
 
     # Получаем данные за последнюю неделю
     week_ago = timezone.now() - timedelta(days=7)
     robots = Robot.objects.filter(created__gte=week_ago)
 
-    # Для каждой модели создаем отдельный лист
-    for model in robots.values_list('model', flat=True).distinct():
-        ws = wb.create_sheet(title=model)
-        ws.append(['Модель', 'Версия', 'Количество за неделю'])
+    # # Для каждой модели создаем отдельный лист
+    # for model in robots.values_list('model', flat=True).distinct():
+    #     ws = wb.create_sheet(title=model)
+    #     ws.append(['Модель', 'Версия', 'Количество за неделю'])
 
-        # Для каждой версии этой модели добавляем строку в лист
-        for version in robots.filter(model=model).values_list('version', flat=True).distinct():
-            count = robots.filter(model=model, version=version).count()
-            ws.append([model, version, count])
+    #     # Для каждой версии этой модели добавляем строку в лист
+    #     for version in robots.filter(model=model).values_list('version', flat=True).distinct():
+    #         count = robots.filter(model=model, version=version).count()
+    #         ws.append([model, version, count])
+
+    # # Тест - файл сохраняется вместе с содержимым
+    # wb = Workbook()
+    # ws = wb.create_sheet(title="model")
+    # ws.append(['Модель', 'Версия', 'Количество за неделю'])
+    # for i in robot_statistics:
+    #     ws.append([i["model"], i["version"], i["count"]])
+
+    groups = {}
+    for row in robot_statistics:
+        model = row["model"]
+        if model not in groups:
+            groups[model] = []
+            groups[model].append(row)
+        else:
+            groups[model].append(row)
+
+    # для каждой группы создаем новый лист и записываем данные
+    for model, data in groups.items():
+    # создаем новый лист с названием модели
+        ws = wb.create_sheet(model)
+    # записываем названия столбцов в первую строку
+        ws.append(headings)
+
+        # записываем данные по модели в последующие строки
+        for row in data:
+            ws.append([row["model"], row["version"], row["count"]])
 
     # Сохраняем книгу в памяти
     filename = 'robots_report.xlsx'

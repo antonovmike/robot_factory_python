@@ -36,15 +36,9 @@ def create_robot(request):
         return HttpResponse(status=405)
 
 
-robot_statistics = [
-    {"model": "R2", "version": "A1", "count": 11},
-    {"model": "R2", "version": "B2", "count": 22},
-    {"model": "R2", "version": "C3", "count": 33},
-    {"model": "S1", "version": "D4", "count": 44},
-    {"model": "S1", "version": "E5", "count": 55},
-    {"model": "S1", "version": "F6", "count": 66},
-    {"model": "R2", "version": "G0", "count": 1},
-]
+with open('robots.json') as f:
+    data = json.load(f)
+robot_statistics = data['robot_statistics']
 
 
 def download_report(request):

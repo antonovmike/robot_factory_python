@@ -1,24 +1,23 @@
 from django.test import TestCase
 
 # Create your tests here.
-from django.test import TestCase, RequestFactory
+from django.test import Client
 from django.urls import reverse
+from .models import Robot
+import json
 
-from .views import download_summary
-
-
-class DownloadSummaryTestCase(TestCase):
+class RobotTest(TestCase):
     def setUp(self):
-        self.factory = RequestFactory()
+        self.client = Client()
 
-    def test_download_summary(self):
-        url = reverse('download-summary')
-        request = self.factory.get(url)
-        response = download_summary(request)
-
+    def test_create_robot(self):
+        url = reverse('create_robot')
+        data = {
+            "model": "R2",
+            "version": "D2",
+            "created": "2022-12-31 23:59:59"
+        }
+        response = self.client.post(url, json.dumps(data), content_type='application/json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'application/vnd.ms-excel')
-        self.assertEqual(
-            response['Content-Disposition'],
-            'attachment; filename=robot_summary.xlsx'
-        )
+        self.assertEqual(Robot.objects.count(), 1)
+        self.assertEqual(Robot.objects.get().model, 'R2')

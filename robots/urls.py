@@ -1,9 +1,8 @@
-from django.contrib import admin
 from django.urls import path
-# from robots.views import RobotView
-from . import views
-
+from .views import create_robot
+from .views import create_robot, download_report
 
 urlpatterns = [
-    path('/', views.download_summary(), name='robot'),
+    path('create/', create_robot, name='create_robot'),
+    path('report/', download_report, name='download_report'),
 ]

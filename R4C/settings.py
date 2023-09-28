@@ -122,5 +122,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Django просит явно указать тип первичного ключа
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+# Чтобы Django не ругался из-за AutoField/BigAutoField
+# Иначе неудобно читать текст в терминале
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -19,5 +19,5 @@ from robots.views import create_robot
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('robots/create/', create_robot),
+    path('robots/create/', create_robot, name='create_robot'),
 ]

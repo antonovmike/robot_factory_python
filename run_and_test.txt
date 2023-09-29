@@ -20,3 +20,6 @@ python3 manage.py runserver
 python3 manage.py test
 
 python3 manage.py test robots.tests
+
+-> Task 3
+

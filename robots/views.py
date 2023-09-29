@@ -3,12 +3,18 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Robot
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import make_aware
-from openpyxl import Workbook
 from django.utils import timezone
+
+from openpyxl import Workbook
+
 from datetime import timedelta
+
+from .models import Robot
+from robots.models import Robot
+from orders.models import Order
+
 import datetime
 import json
 import sqlite3
@@ -29,6 +35,7 @@ def create_robot(request):
         if model and version and created:
             try:
                 robot = Robot.objects.create(model=model, version=version, created=created)
+                notify_customer(robot)
                 return JsonResponse({'message': f'Робот {robot.model}-{robot.version} успешно создан'})
             except Exception as e:
                 return JsonResponse({'error': str(e)}, status=400)
@@ -93,3 +100,28 @@ def download_report(request):
         response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
 
     return response
+
+
+def check_robot_exists(customer, robot_model, robot_version):
+    try:
+        # Проверяем наличие робота в базе данных
+        robot = Robot.objects.get(model=robot_model, version=robot_version)
+    except Robot.DoesNotExist:
+        # Если робота нет в наличии, добавляем заказ в список ожидания
+        order = Order.objects.create(customer=customer, robot_serial=f'{robot_model}-{robot_version}')
+        return f'Robot {robot_model}-{robot_version} is not available. Your order is added to the waiting list.'
+    else:
+        return f'Robot {robot_model}-{robot_version} is available.'
+
+
+def notify_customer(robot):
+    # Проверяем, есть ли заказы на этот робот в списке ожидания
+    orders = Order.objects.filter(robot_serial=f'{robot.model}-{robot.version}')
+    for order in orders:
+        # Составляем текст письма
+        message = f"""Добрый день!
+Недавно вы интересовались нашим роботом модели {robot.model}, версии {robot.version}.
+Этот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами"""
+        # Сохраняем письмо в файл email_{customer-name}_{Year-Month-Day}.txt
+        with open(f'email_{order.customer}_{datetime.datetime.now().strftime("%Y-%m-%d")}.txt', 'w') as f:
+            f.write(message)

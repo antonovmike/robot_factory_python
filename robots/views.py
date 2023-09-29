@@ -19,6 +19,7 @@ import datetime
 import json
 import sqlite3
 
+
 @csrf_exempt
 def create_robot(request):
     if request.method == 'POST':
@@ -27,20 +28,21 @@ def create_robot(request):
         version = data.get('version')
         created_str = data.get('created')
 
-        # конвертируем строку в datetime объект
+        # Проверка наличия необходимых данных
+        if not all([model, version, created_str]):
+            return JsonResponse({'error': 'Неверные входные данные'}, status=400)
+
+        # Конвертируем строку в datetime объект
         naive_datetime = parse_datetime(created_str)
         created = make_aware(naive_datetime)
 
-        # проверка на соответствие существующим в системе моделям
-        if model and version and created:
-            try:
-                robot = Robot.objects.create(model=model, version=version, created=created)
-                notify_customer(robot)
-                return JsonResponse({'message': f'Робот {robot.model}-{robot.version} успешно создан'})
-            except Exception as e:
-                return JsonResponse({'error': str(e)}, status=400)
-        else:
-            return JsonResponse({'error': 'Неверные входные данные'}, status=400)
+        # Проверка на соответствие существующим моделям
+        try:
+            robot = Robot.objects.create(model=model, version=version, created=created)
+            notify_customer(robot)
+            return JsonResponse({'message': f'Робот {robot.model}-{robot.version} успешно создан'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
     else:
         return HttpResponse(status=405)
 
@@ -119,6 +121,6 @@ def notify_customer(robot):
         message = f"""Добрый день!
 Недавно вы интересовались нашим роботом модели {robot.model}, версии {robot.version}.
 Этот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами"""
-        # Сохраняем письмо в файл email_{customer-name}_{Year-Month-Day}.txt
+        # Сохраняем письмо в текстовый файл
         with open(f'email_{order.customer}_{datetime.datetime.now().strftime("%Y-%m-%d")}.txt', 'w') as f:
             f.write(message)

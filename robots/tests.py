@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from .models import Robot
+from django.core.files.uploadedfile import TemporaryUploadedFile
 import json
 
 class RobotTest(TestCase):
@@ -35,8 +36,6 @@ class RobotViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Robot.objects.count(), 1)
         self.assertEqual(Robot.objects.get().model, 'R2')
-
-        from django.core.files.uploadedfile import TemporaryUploadedFile
 
     def test_download_report(self):
         url = reverse('download_report')

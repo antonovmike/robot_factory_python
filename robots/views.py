@@ -59,7 +59,6 @@ def download_report(request):
 
     # Получаем данные за последнюю неделю
     week_ago = timezone.now() - timedelta(days=7)
-    robots = Robot.objects.filter(created__gte=week_ago)
 
     # преобразуем значения в столбце date из текста в объекты datetime
     for row in robot_statistics:
@@ -103,15 +102,13 @@ def download_report(request):
 
 
 def check_robot_exists(customer, robot_model, robot_version):
-    try:
-        # Проверяем наличие робота в базе данных
-        robot = Robot.objects.get(model=robot_model, version=robot_version)
-    except Robot.DoesNotExist:
-        # Если робота нет в наличии, добавляем заказ в список ожидания
-        order = Order.objects.create(customer=customer, robot_serial=f'{robot_model}-{robot_version}')
-        return f'Robot {robot_model}-{robot_version} is not available. Your order is added to the waiting list.'
-    else:
+    # Проверяем наличие робота в базе данных
+    if Robot.objects.filter(model=robot_model, version=robot_version).exists():
         return f'Robot {robot_model}-{robot_version} is available.'
+    else:
+    # Если робота нет в наличии, добавляем заказ в список ожидания
+        Order.objects.create(customer=customer, robot_serial=f'{robot_model}-{robot_version}')
+        return f'Robot {robot_model}-{robot_version} is not available. Your order is added to the waiting list.'
 
 
 def notify_customer(robot):

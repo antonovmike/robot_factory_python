@@ -9,7 +9,9 @@ from django.utils.timezone import make_aware
 from openpyxl import Workbook
 from django.utils import timezone
 from datetime import timedelta
+import datetime
 import json
+import sqlite3
 
 @csrf_exempt
 def create_robot(request):
@@ -36,12 +38,13 @@ def create_robot(request):
         return HttpResponse(status=405)
 
 
-with open('robots.json') as f:
-    data = json.load(f)
-robot_statistics = data['robot_statistics']
-
-
 def download_report(request):
+    conn = sqlite3.connect("db.sqlite3")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM robots_robot")
+    robot_statistics = [
+        dict(zip([column[0] for column in cur.description], row)) for row in cur.fetchall()
+    ]
     # Создаем новую книгу Excel
     wb = Workbook()
     wb.remove(wb.active)
@@ -51,22 +54,14 @@ def download_report(request):
     week_ago = timezone.now() - timedelta(days=7)
     robots = Robot.objects.filter(created__gte=week_ago)
 
-    # # Для каждой модели создаем отдельный лист
-    # for model in robots.values_list('model', flat=True).distinct():
-    #     ws = wb.create_sheet(title=model)
-    #     ws.append(['Модель', 'Версия', 'Количество за неделю'])
-
-    #     # Для каждой версии этой модели добавляем строку в лист
-    #     for version in robots.filter(model=model).values_list('version', flat=True).distinct():
-    #         count = robots.filter(model=model, version=version).count()
-    #         ws.append([model, version, count])
-
-    # # Тест - файл сохраняется вместе с содержимым
-    # wb = Workbook()
-    # ws = wb.create_sheet(title="model")
-    # ws.append(['Модель', 'Версия', 'Количество за неделю'])
-    # for i in robot_statistics:
-    #     ws.append([i["model"], i["version"], i["count"]])
+    # преобразуем значения в столбце date из текста в объекты datetime
+    for row in robot_statistics:
+        row["date"] = datetime.datetime.strptime(row["date"], "%Y-%m-%d %H:%M:%S.%f")
+        # вычисляем дату неделю назад
+        week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+        week_ago = str(week_ago)
+        # отфильтровываем данные по условию, что дата больше или равна дате неделю назад
+        robot_statistics = [row for row in robot_statistics if str(row["date"]) >= week_ago]
 
     groups = {}
     for row in robot_statistics:

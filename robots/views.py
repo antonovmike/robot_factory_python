@@ -21,19 +21,20 @@ def create_robot(request):
         version = data.get('version')
         created_str = data.get('created')
 
-        # конвертируем строку в datetime объект
+        # Проверка наличия необходимых данных
+        if not all([model, version, created_str]):
+            return JsonResponse({'error': 'Неверные входные данные'}, status=400)
+
+        # Конвертируем строку в datetime объект
         naive_datetime = parse_datetime(created_str)
         created = make_aware(naive_datetime)
 
-        # проверка на соответствие существующим в системе моделям
-        if model and version and created:
-            try:
-                robot = Robot.objects.create(model=model, version=version, created=created)
-                return JsonResponse({'message': f'Робот {robot.model}-{robot.version} успешно создан'})
-            except Exception as e:
-                return JsonResponse({'error': str(e)}, status=400)
-        else:
-            return JsonResponse({'error': 'Неверные входные данные'}, status=400)
+        # Проверка на соответствие существующим моделям
+        try:
+            robot = Robot.objects.create(model=model, version=version, created=created)
+            return JsonResponse({'message': f'Робот {robot.model}-{robot.version} успешно создан'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
     else:
         return HttpResponse(status=405)
 

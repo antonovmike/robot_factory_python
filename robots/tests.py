@@ -16,12 +16,19 @@ import json
 import os
 
 
-class RobotTest(TestCase):
+class BaseTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = Client()
         cls.url = reverse('create_robot')
-        
+        cls.url_create_robot = reverse('create_robot')
+        cls.url_download_report = reverse('download_report')
+        cls.customer = Customer.objects.create(email='test@example.com')
+        cls.robot_model = 'R2'
+        cls.robot_version = 'D2'
+
+
+class RobotTest(BaseTest):        
     def create_robot_status_code(self):
         data = {
             "model": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
@@ -40,12 +47,7 @@ class RobotTest(TestCase):
         self.assertEqual(Robot.objects.get().model, 'R2')
 
 
-class RobotViewTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.url_create_robot = reverse('create_robot')
-        cls.url_download_report = reverse('download_report')
-
+class RobotViewTest(BaseTest):
     def download_report_status_code(self):
         response = self.client.get(self.url_download_report)
         self.assertEqual(response.status_code, 200)
@@ -59,13 +61,7 @@ class RobotViewTest(TestCase):
         self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         
 
-class RobotAvailabilityTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.customer = Customer.objects.create(email='test@example.com')
-        cls.robot_model = 'R2'
-        cls.robot_version = 'D2'
-
+class RobotAvailabilityTestCase(BaseTest):
     def test_robot_not_available(self):
         message = check_robot_exists(self.customer, self.robot_model, self.robot_version)
         self.assertEqual(message, f'Robot {self.robot_model}-{self.robot_version} is not available. Your order is added to the waiting list.')

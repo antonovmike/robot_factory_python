@@ -1,25 +1,15 @@
 -> Task 1
 
-python3 manage.py runserver
-
-curl -X POST -H "Content-Type: application/json" -d '{"model":"R2","version":"D2","created":"2022-12-31 23:59:59"}' http://127.0.0.1:8000/robots/create/
-
-Чтобы быстро создать БД с моделями роботов:
+для быстрого создания БД с моделями роботов:
 python3 add_to_sqlite.py
-
-python3 manage.py test
 
 -> Task 2
 
 pip install openpyxl
 
-python3 manage.py runserver
-
+Создание и загрузка файла со сводкой по суммарным показателям производства роботов за последнюю неделю:
 127.0.0.1:8000/robots/report/
 
+
+TESTS:
 python3 manage.py test
-
-python3 manage.py test robots.tests
-
--> Task 3
-

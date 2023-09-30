@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import make_aware
 from django.utils import timezone
+from django.core.mail import send_mail
 
 from openpyxl import Workbook
 
@@ -121,6 +122,13 @@ def notify_customer(robot):
         message = f"""Добрый день!
 Недавно вы интересовались нашим роботом модели {robot.model}, версии {robot.version}.
 Этот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами"""
+        # Отправляем письмо
+        send_mail(
+            'Робот в наличии',  # Тема письма
+            message,  # Текст письма
+            'from@example.com',  # Адрес отправителя
+            [order.customer.email],  # Адрес получателя
+        )
         # Сохраняем письмо в текстовый файл
         with open(f'email_{order.customer}_{datetime.datetime.now().strftime("%Y-%m-%d")}.txt', 'w') as f:
             f.write(message)

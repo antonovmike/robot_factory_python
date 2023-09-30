@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from django.utils.crypto import get_random_string
+from django.core import mail
 
 from .models import Robot
 from customers.models import Customer
@@ -84,3 +85,15 @@ class NotificationTestCase(TestCase):
     def test_notify_customer(self):
         notify_customer(self.robot)
         self.assertTrue(os.path.isfile(f'email_{self.customer}_{datetime.datetime.now().strftime("%Y-%m-%d")}.txt'))
+
+
+class EmailTest(TestCase):
+    def test_send_email(self):
+        # Отправляем письмо
+        mail.send_mail('Subject here', 'Here is the message.',
+            'from@example.com', ['to@example.com'],
+            fail_silently=False)
+        # Проверяем, что одно письмо было отправлено
+        self.assertEqual(len(mail.outbox), 1)
+        # Проверяем, что тема первого письма правильная
+        self.assertEqual(mail.outbox[0].subject, 'Subject here')

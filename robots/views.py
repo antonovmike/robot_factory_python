@@ -2,16 +2,66 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import Robot
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import make_aware
+from django.views.decorators.csrf import csrf_exempt
+from jsonschema import Draft7Validator
+# from jsonschema import validate, ValidationError
+
+from .models import Robot
+
 import json
+
+
+schema = {
+    "type": "object",
+    "properties": {
+        "model": {"type": "string"},
+        "version": {"type": "string"},
+        "created": {"type": "string", "format": "date-time"},
+    },
+    "required": ["model", "version", "created"],
+}
+
+
+# def validate_json(data):
+#     try:
+#         validate(data, schema)
+#         return True
+#     except ValidationError as e:
+#         return False
+
+
+# # Загрузка и валидация JSON из файла
+# def load_and_validate_json(file_path):
+#     with open(file_path, 'r') as f:
+#         data = json.load(f)
+        
+#         # Если файл содержит информацию о нескольких роботах
+#         if isinstance(data, list):
+#             for item in data:
+#                 if not validate_json(item):
+#                     print(f"Ошибка валидации JSON: {item}")
+#                     return
+#             print("Успех")
+#         # Если файл содержит информацию о одном роботе
+#         elif isinstance(data, dict):
+#             if not validate_json(data):
+#                 print(f"Ошибка валидации JSON: {data}")
+#                 return
+#             print("Успех")
+#         else:
+#             print("Неверный формат данных")
+
 
 @csrf_exempt
 def create_robot(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        valid = Draft7Validator(schema)
+        errors = [error.message for error in valid.iter_errors(data)]
+        if errors:
+            return JsonResponse({'error': errors}, status=400)
         model = data.get('model')
         version = data.get('version')
         created_str = data.get('created')
@@ -19,6 +69,7 @@ def create_robot(request):
         # конвертируем строку в datetime объект и делаем его "осведомленным"
         naive_datetime = parse_datetime(created_str)
         created = make_aware(naive_datetime)
+
 
         # проверка на соответствие существующим в системе моделям
         if model and version and created:

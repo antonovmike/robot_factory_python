@@ -14,8 +14,8 @@ class RobotTest(TestCase):
     def setUpTestData(cls):
         cls.client = Client()
         cls.url = reverse('create_robot')
-        
-    def create_robot_status_code(self):
+
+    def robot_status_code(self):
         data = {
             "model": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
             "version": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
@@ -24,7 +24,7 @@ class RobotTest(TestCase):
         response = self.client.post(self.url, json.dumps(data), content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
-    def create_robot_object_count(self):
+    def robot_object_count(self):
         self.client.post(self.url, json.dumps(self.data), content_type='application/json')
         self.assertEqual(Robot.objects.count(), 1)
 

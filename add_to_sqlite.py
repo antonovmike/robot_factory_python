@@ -29,7 +29,15 @@ for i in range(10):
     for j in range(versions):
         version = random.choice("ABCDEFGHIJKLMNOPQRS") + str(random.randint(1, 9))
         count = random.randint(0, 20)
-        date = str(datetime.datetime.now())
+        # Генерация даты в диапазоне от "сегодня" до "2 недели назад"
+        now = datetime.datetime.now()
+        two_weeks_ago = now - datetime.timedelta(weeks=2)
+        random_number_of_days = random.randint(0, 14)
+        random_time_within_day = datetime.timedelta(hours=random.randint(0, 23), 
+                                                    minutes=random.randint(0, 59),
+                                                    seconds=random.randint(0, 59))
+        random_date = two_weeks_ago + datetime.timedelta(days=random_number_of_days) + random_time_within_day
+        date = str(random_date)
         robot = {"model": model, "version": version, "count": count, "date": date}
 
         # добавляем данные в таблицу robots_robot с помощью SQL-запроса

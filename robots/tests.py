@@ -30,7 +30,7 @@ class BaseTest(TestCase):
 
 
 class RobotTest(BaseTest):        
-    def create_robot_status_code(self):
+    def test_create_robot_status_code(self):
         data = {
             "model": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
             "version": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
@@ -39,28 +39,44 @@ class RobotTest(BaseTest):
         response = self.client.post(self.url, json.dumps(data), content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
-    def create_robot_object_count(self):
-        self.client.post(self.url, json.dumps(self.data), content_type='application/json')
-        self.assertEqual(Robot.objects.count(), 1)
+    def test_create_robot_object_count(self):
+        initial_count = Robot.objects.count()
+        data = {
+            "model": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
+            "version": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
+            "created": "2022-12-31 23:59:59"
+        }
+        response = self.client.post(self.url_create_robot, json.dumps(data), content_type='application/json')
+        assert response.status_code == 200
+        assert Robot.objects.count() == initial_count + 1
 
-    def create_robot_model(self):
-        self.client.post(self.url, json.dumps(self.data), content_type='application/json')
-        self.assertEqual(Robot.objects.get().model, 'R2')
+    def test_create_robot_model(self):
+        model = get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789')
+        version = get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789')
+        data = {
+            "model": model,
+            "version": version,
+            "created": "2022-12-31 23:59:59"
+        }
+        response = self.client.post(self.url_create_robot, json.dumps(data), content_type='application/json')
+        assert response.status_code == 200
+        robot = Robot.objects.get(model=model, version=version)
+        assert robot is not None
 
 
-class RobotViewTest(BaseTest):
-    def download_report_status_code(self):
-        response = self.client.get(self.url_download_report)
-        self.assertEqual(response.status_code, 200)
+# class RobotViewTest(BaseTest):
+#     def test_download_report_status_code(self):
+#         response = self.client.get(self.url_download_report)
+#         assert response.status_code == 200
 
-    def download_report_content_disposition(self):
-        response = self.client.get(self.url_download_report)
-        self.assertEqual(response['Content-Disposition'], 'attachment; filename=robots_report.xlsx')
+    # def test_download_report_status_code(self):
+    #     response = self.client.get(self.url_download_report)
+    #     self.assertEqual(response.status_code, 200)
 
-    def download_report_content_type(self):
-        response = self.client.get(self.url_download_report)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        
+    # def test_download_report_content_disposition(self):
+    #     response = self.client.get(self.url_download_report)
+    #     self.assertEqual(response['Content-Disposition'], 'attachment; filename=robots_report.xlsx')
+
 
 class RobotAvailabilityTestCase(BaseTest):
     def test_robot_not_available(self):

@@ -4,8 +4,12 @@ from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
 from django.utils.crypto import get_random_string
+
+from datetime import datetime, timedelta
+from random import randint
+
 from .models import Robot
-from django.core.files.uploadedfile import TemporaryUploadedFile
+
 import json
 
 
@@ -19,10 +23,14 @@ class BaseTest(TestCase):
 
 class RobotTest(BaseTest):
     def generate_data(self):
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=10)
+        random_seconds = randint(0, int((end_date - start_date).total_seconds()))
+        random_date = start_date + timedelta(seconds=random_seconds)
         return {
             "model": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
             "version": get_random_string(length=2, allowed_chars='ABCDEFGHIJKLMNOT123456789'),
-            "created": "2022-12-31 23:59:59"
+            "created": random_date.strftime("%Y-%m-%d %H:%M:%S")
         }
         
     def test_create_robot_status_code(self):

@@ -1,8 +1,6 @@
 python3 manage.py runserver
 
 curl -X POST -H "Content-Type: application/json" -d '{"model":"R2","version":"D2","created":"2022-12-31 23:59:59"}' http://127.0.0.1:8000/robots/create/
-curl -X POST -H "Content-Type: application/json" -d '{"model":"R2","version":"D2","created":"2022-12-31T23:59:59Z"}' http://127.0.0.1:8000/robots/create/
-curl -X POST -H "Content-Type: application/json" -d '{"model":"R2","version":"D2","created":"2022-12-31T23:59:59+03:00"}' http://127.0.0.1:8000/robots/create/
 
 echo '{"model":"R2","version":"D2","created":"2022-12-31T23:59:59"}' | python3 -m json.tool
 

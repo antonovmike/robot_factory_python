@@ -1,0 +1,269 @@
+{
+    "robot_statistics": [
+        {
+            "model": "X3",
+            "version": "Z5",
+            "count": 20
+        },
+        {
+            "model": "X3",
+            "version": "N8",
+            "count": 19
+        },
+        {
+            "model": "X3",
+            "version": "J4",
+            "count": 18
+        },
+        {
+            "model": "X3",
+            "version": "X2",
+            "count": 4
+        },
+        {
+            "model": "X3",
+            "version": "T2",
+            "count": 20
+        },
+        {
+            "model": "X3",
+            "version": "Q3",
+            "count": 12
+        },
+        {
+            "model": "Y7",
+            "version": "G2",
+            "count": 12
+        },
+        {
+            "model": "Y7",
+            "version": "Q1",
+            "count": 16
+        },
+        {
+            "model": "Y7",
+            "version": "V3",
+            "count": 18
+        },
+        {
+            "model": "Y7",
+            "version": "H8",
+            "count": 13
+        },
+        {
+            "model": "Y7",
+            "version": "W3",
+            "count": 15
+        },
+        {
+            "model": "Y7",
+            "version": "W2",
+            "count": 16
+        },
+        {
+            "model": "Y7",
+            "version": "Y6",
+            "count": 19
+        },
+        {
+            "model": "E4",
+            "version": "F6",
+            "count": 14
+        },
+        {
+            "model": "E4",
+            "version": "D9",
+            "count": 12
+        },
+        {
+            "model": "E4",
+            "version": "W8",
+            "count": 9
+        },
+        {
+            "model": "S2",
+            "version": "J5",
+            "count": 15
+        },
+        {
+            "model": "S2",
+            "version": "I7",
+            "count": 15
+        },
+        {
+            "model": "S2",
+            "version": "E8",
+            "count": 3
+        },
+        {
+            "model": "S2",
+            "version": "R4",
+            "count": 5
+        },
+        {
+            "model": "S2",
+            "version": "K6",
+            "count": 10
+        },
+        {
+            "model": "S2",
+            "version": "I2",
+            "count": 6
+        },
+        {
+            "model": "R2",
+            "version": "T3",
+            "count": 15
+        },
+        {
+            "model": "R2",
+            "version": "E4",
+            "count": 19
+        },
+        {
+            "model": "R2",
+            "version": "F5",
+            "count": 7
+        },
+        {
+            "model": "R2",
+            "version": "J2",
+            "count": 4
+        },
+        {
+            "model": "R2",
+            "version": "B1",
+            "count": 13
+        },
+        {
+            "model": "X3",
+            "version": "S9",
+            "count": 3
+        },
+        {
+            "model": "X3",
+            "version": "M7",
+            "count": 0
+        },
+        {
+            "model": "X3",
+            "version": "J1",
+            "count": 13
+        },
+        {
+            "model": "X3",
+            "version": "J4",
+            "count": 3
+        },
+        {
+            "model": "X3",
+            "version": "T4",
+            "count": 16
+        },
+        {
+            "model": "G8",
+            "version": "U6",
+            "count": 16
+        },
+        {
+            "model": "G8",
+            "version": "Y3",
+            "count": 2
+        },
+        {
+            "model": "G8",
+            "version": "U9",
+            "count": 4
+        },
+        {
+            "model": "G8",
+            "version": "U8",
+            "count": 9
+        },
+        {
+            "model": "G8",
+            "version": "W5",
+            "count": 2
+        },
+        {
+            "model": "G8",
+            "version": "I3",
+            "count": 4
+        },
+        {
+            "model": "G8",
+            "version": "C6",
+            "count": 9
+        },
+        {
+            "model": "Y9",
+            "version": "M5",
+            "count": 6
+        },
+        {
+            "model": "Y9",
+            "version": "F5",
+            "count": 9
+        },
+        {
+            "model": "Y9",
+            "version": "X6",
+            "count": 15
+        },
+        {
+            "model": "Q7",
+            "version": "G5",
+            "count": 9
+        },
+        {
+            "model": "Q7",
+            "version": "N9",
+            "count": 12
+        },
+        {
+            "model": "Q7",
+            "version": "P3",
+            "count": 11
+        },
+        {
+            "model": "Q7",
+            "version": "J4",
+            "count": 4
+        },
+        {
+            "model": "Q7",
+            "version": "W8",
+            "count": 1
+        },
+        {
+            "model": "Q7",
+            "version": "J7",
+            "count": 14
+        },
+        {
+            "model": "Q7",
+            "version": "T8",
+            "count": 6
+        },
+        {
+            "model": "Z5",
+            "version": "W2",
+            "count": 19
+        },
+        {
+            "model": "Z5",
+            "version": "X9",
+            "count": 7
+        },
+        {
+            "model": "Z5",
+            "version": "S3",
+            "count": 18
+        },
+        {
+            "model": "Z5",
+            "version": "E1",
+            "count": 5
+        }
+    ]
+}

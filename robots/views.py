@@ -24,36 +24,6 @@ schema = {
 }
 
 
-# def validate_json(data):
-#     try:
-#         validate(data, schema)
-#         return True
-#     except ValidationError as e:
-#         return False
-
-
-# # Загрузка и валидация JSON из файла
-# def load_and_validate_json(file_path):
-#     with open(file_path, 'r') as f:
-#         data = json.load(f)
-        
-#         # Если файл содержит информацию о нескольких роботах
-#         if isinstance(data, list):
-#             for item in data:
-#                 if not validate_json(item):
-#                     print(f"Ошибка валидации JSON: {item}")
-#                     return
-#             print("Успех")
-#         # Если файл содержит информацию о одном роботе
-#         elif isinstance(data, dict):
-#             if not validate_json(data):
-#                 print(f"Ошибка валидации JSON: {data}")
-#                 return
-#             print("Успех")
-#         else:
-#             print("Неверный формат данных")
-
-
 @csrf_exempt
 def create_robot(request):
     if request.method == 'POST':

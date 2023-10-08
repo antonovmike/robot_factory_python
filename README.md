@@ -1,5 +1,7 @@
 # R4C - Robots for consumers
 
+[Rust version](https://github.com/antonovmike/robot_factory_rust)
+
 ## Небольшая предыстория.
 Давным-давно, в далёкой-далёкой галактике, была компания производящая различных 
 роботов. 

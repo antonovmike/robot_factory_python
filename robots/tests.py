@@ -84,19 +84,19 @@ class RobotAPITestCase(TestCase):
         with self.assertRaises(ValidationError):
             serializer.is_valid(raise_exception=True)
 
-def test_robot_report_view(self):
-    Robot.objects.create(model="A1", version="B2", created="2023-10-06 11:09:22")
-    Robot.objects.create(model="A2", version="F3", created="2023-10-06 11:09:22")
-    Robot.objects.create(model="E2", version="R4", created="2023-10-07 12:10:23")
-    Robot.objects.create(model="E5", version="T1", created="2023-10-07 12:10:23")
-    Robot.objects.create(model="E8", version="W2", created="2023-10-07 12:10:23")
-    # Получить URL для API-endpoint создания робота
-    report_url = reverse('robot-report')
-    # Отправить GET-запрос к RobotReportView
-    response = self.client.get(report_url)
-    # Проверить, что статус-код ответа равен 200 (OK)
-    self.assertEqual(response.status_code, status.HTTP_200_OK)
-    # Проверить, что в ответе есть данные для каждой страницы
-    content = list(response.streaming_content) # Преобразовать генератор в список
-    self.assertTrue(b'A' in content[0]) # Проверить, что первый элемент списка содержит букву A
-    self.assertTrue(b'E' in content[1]) # Проверить, что второй элемент списка содержит букву E
+    def test_robot_report_view(self):
+        Robot.objects.create(model="A1", version="B2", created="2023-10-06 11:09:22")
+        Robot.objects.create(model="A2", version="F3", created="2023-10-06 11:09:22")
+        Robot.objects.create(model="E2", version="R4", created="2023-10-07 12:10:23")
+        Robot.objects.create(model="E5", version="T1", created="2023-10-07 12:10:23")
+        Robot.objects.create(model="E8", version="W2", created="2023-10-07 12:10:23")
+        # Получить URL для API-endpoint создания робота
+        report_url = reverse('robot-report')
+        # Отправить GET-запрос к RobotReportView
+        response = self.client.get(report_url)
+        # Проверить, что статус-код ответа равен 200 (OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Проверить, что в ответе есть данные для каждой страницы
+        content = list(response.streaming_content) # Преобразовать генератор в список
+        self.assertTrue(b'A' in content[0]) # Проверить, что первый элемент списка содержит букву A
+        self.assertTrue(b'E' in content[1]) # Проверить, что второй элемент списка содержит букву E

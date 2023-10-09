@@ -121,3 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Чтобы Django не ругался из-за AutoField/BigAutoField
+# Иначе неудобно читать текст в терминале
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -1,12 +1,14 @@
 # from django.shortcuts import render
-from rest_framework import generics
-from .models import Robot
-from .serializers import RobotSerializer
 from django.views import View
 from django.http import FileResponse
-from openpyxl import Workbook
 from django.utils import timezone
 from django.db.models import Count
+from openpyxl import Workbook
+
+from rest_framework import generics
+
+from .models import Robot
+from .serializers import RobotSerializer
 
 
 class RobotCreateView(generics.CreateAPIView):

@@ -62,3 +62,25 @@ class RobotAPITestCase(TestCase):
         # Проверить, что при валидации данных вызывается исключение ValidationError
         with self.assertRaises(ValidationError):
             serializer.is_valid(raise_exception=True)
+
+    def test_validate_incorrect_model(self):
+        # Некорректные данные для теста (неверный формат model)
+        data = {
+            "model": "11",
+            "version": "B2",
+            "created": timezone.now()
+        }
+        serializer = RobotSerializer(data=data)
+        with self.assertRaises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    def test_validate_incorrect_version(self):
+        # Некорректные данные для теста (неверный формат version)
+        data = {
+            "model": "A1",
+            "version": "BB",
+            "created": timezone.now()
+        }
+        serializer = RobotSerializer(data=data)
+        with self.assertRaises(ValidationError):
+            serializer.is_valid(raise_exception=True)

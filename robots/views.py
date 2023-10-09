@@ -1,10 +1,7 @@
-# from django.shortcuts import render
 from django.views import View
 from django.http import FileResponse
 from django.utils import timezone
 from django.db.models import Count
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from openpyxl import Workbook
 
 from rest_framework import generics
@@ -19,22 +16,29 @@ class RobotCreateView(generics.CreateAPIView):
     serializer_class = RobotSerializer
 
 
-class RobotReportView(View):
-    def get(self, request):
-        wb = Workbook()
-        # Удалить дефолтную страницу
-        wb.remove(wb.active)
-        # Получить данные за последнюю неделю
-        week_ago = timezone.now() - timezone.timedelta(weeks=1)
-        robots = Robot.objects.filter(created__gte=week_ago)
-        # Группировать данные по первой букве модели и версии
-        data = robots.values('model', 'version').annotate(total=Count('model')).order_by('model', 'version')
+class ReportGenerator:
+    def __init__(self):
+        self.week_ago = timezone.now() - timezone.timedelta(weeks=1)
+        self.robots = Robot.objects.filter(created__gte=self.week_ago)
+        self.data = self.robots.values('model', 'version').annotate(total=Count('model')).order_by('model', 'version')
+
+    def generate_report(self):
+        return self.data
+
+
+class WorkbookCreator:
+    def __init__(self, data):
+        self.data = data
+        self.wb = Workbook()
+        self.wb.remove(self.wb.active)
+
+    def create_workbook(self):
         current_letter = ''
-        for row_data in data:
+        for row_data in self.data:
             letter = row_data['model'][0]
             if letter != current_letter:
                 current_letter = letter
-                ws = wb.create_sheet(title=letter)
+                ws = self.wb.create_sheet(title=letter)
                 headers = ["Модель", "Версия", "Количество за неделю"]
                 for col_num, column_title in enumerate(headers, 1):
                     col_letter = ws.cell(row=1, column=col_num).column_letter
@@ -44,15 +48,40 @@ class RobotReportView(View):
             ws.cell(row=row_num, column=1, value=row_data['model'])
             ws.cell(row=row_num, column=2, value=row_data['version'])
             ws.cell(row=row_num, column=3, value=row_data['total'])
+        return self.wb
 
-        wb.save('robots_report.xlsx')
 
+class FileHandler:
+    def __init__(self, wb):
+        self.wb = wb
+
+    def save_workbook_to_file(self):
+        self.wb.save('robots_report.xlsx')
+        return 'robots_report.xlsx'
+
+    def create_file_response(self, filepath):
         response = FileResponse(
-            open('robots_report.xlsx', 'rb'), 
+            open(filepath, 'rb'), 
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         response['Content-Disposition'] = 'attachment; filename=robots_report.xlsx'
         return response
+
+
+class RobotReportView(View):
+    def get(self, request):
+        report_generator = ReportGenerator()
+        data = report_generator.generate_report()
+
+        workbook_creator = WorkbookCreator(data)
+        wb = workbook_creator.create_workbook()
+
+        file_handler = FileHandler(wb)
+        filepath = file_handler.save_workbook_to_file()
+        response = file_handler.create_file_response(filepath)
+
+        return response
+
 
 
 class RobotDeleteView(generics.DestroyAPIView):

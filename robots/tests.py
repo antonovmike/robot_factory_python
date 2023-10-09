@@ -19,7 +19,7 @@ class RobotAPITestCase(TestCase):
         self.create_url = reverse('robot-create')
 
     def test_create_robot_success(self):
-        data = {"model":"E5", "version":"F6", "created":"2023-10-09 13:11:24"}
+        data = {"model":"E5", "version":"F6", "created":"2023-10-08 11:11:24"}
         response = self.client.post(self.create_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         robot = Robot.objects.get(model="E5")
@@ -29,7 +29,7 @@ class RobotAPITestCase(TestCase):
 
     def test_create_robot_fail(self):
         # Подготовить невалидные данные для запроса (например, пустые или некорректные)
-        data = {"model":"", "version":"G7", "created":"2023-10-09 14:12:25"}
+        data = {"model":"", "version":"G7", "created":"2023-10-09 11:12:25"}
         # Отправить POST-запрос с данными
         response = self.client.post(self.create_url, data, format='json')
         # Проверить, что статус-код ответа равен 400 (Bad Request)

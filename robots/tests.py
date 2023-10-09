@@ -1,12 +1,15 @@
 from django.test import TestCase
 
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from robots.models import Robot
 from robots.serializers import RobotSerializer
+
+from django.utils import timezone
+from rest_framework.exceptions import ValidationError
+
 
 class RobotAPITestCase(TestCase):
     def setUp(self):
@@ -37,3 +40,25 @@ class RobotAPITestCase(TestCase):
         # Проверить, что в ответе есть сообщение об ошибке валидации
         self.assertTrue('model' in response.data)
         self.assertEqual(response.data['model'], ['This field may not be blank.'])
+
+    def test_validate_correct_data(self):
+        # Корректные данные для теста
+        data = {
+            "model": "A1",
+            "version": "B2",
+            "created": timezone.now()
+        }
+        serializer = RobotSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+
+    def test_validate_future_created(self):
+        # Некорректные данные для теста (дата создания в будущем)
+        data = {
+            "model": "A1",
+            "version": "B2",
+            "created": timezone.now() + timezone.timedelta(days=1)
+        }
+        serializer = RobotSerializer(data=data)
+        # Проверить, что при валидации данных вызывается исключение ValidationError
+        with self.assertRaises(ValidationError):
+            serializer.is_valid(raise_exception=True)

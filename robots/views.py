@@ -19,20 +19,24 @@ class RobotReportView(View):
     def get(self, request):
         # Создать новый workbook
         wb = Workbook()
-        ws = wb.active
-        # Добавить заголовки в первую строку
-        headers = ["Модель", "Версия", "Количество за неделю"]
-        for col_num, column_title in enumerate(headers, 1):
-            col_letter = ws.cell(row=1, column=col_num).column_letter
-            ws['{}1'.format(col_letter)] = column_title
-            ws.column_dimensions[col_letter].width = 15
+        # Удалить дефолтную страницу
+        wb.remove(wb.active)
         # Получить данные за последнюю неделю
         week_ago = timezone.now() - timezone.timedelta(weeks=1)
         robots = Robot.objects.filter(created__gte=week_ago)
         # Группировать данные по модели и версии
         data = robots.values('model', 'version').annotate(total=Count('model')).order_by('model', 'version')
-        # Добавить данные в таблицу
-        for row_num, row_data in enumerate(data, 2):
+        current_model = ''
+        for row_data in data:
+            if row_data['model'] != current_model:
+                current_model = row_data['model']
+                ws = wb.create_sheet(title=current_model)
+                headers = ["Модель", "Версия", "Количество за неделю"]
+                for col_num, column_title in enumerate(headers, 1):
+                    col_letter = ws.cell(row=1, column=col_num).column_letter
+                    ws['{}1'.format(col_letter)] = column_title
+                    ws.column_dimensions[col_letter].width = 15
+            row_num = ws.max_row + 1
             ws.cell(row=row_num, column=1, value=row_data['model'])
             ws.cell(row=row_num, column=2, value=row_data['version'])
             ws.cell(row=row_num, column=3, value=row_data['total'])
@@ -42,3 +46,4 @@ class RobotReportView(View):
         response = FileResponse(open('robots_report.xlsx', 'rb'), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=robots_report.xlsx'
         return response
+

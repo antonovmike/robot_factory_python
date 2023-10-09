@@ -3,9 +3,12 @@ from django.views import View
 from django.http import FileResponse
 from django.utils import timezone
 from django.db.models import Count
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from openpyxl import Workbook
 
 from rest_framework import generics
+from rest_framework.response import Response
 
 from .models import Robot
 from .serializers import RobotSerializer
@@ -50,3 +53,21 @@ class RobotReportView(View):
         )
         response['Content-Disposition'] = 'attachment; filename=robots_report.xlsx'
         return response
+
+
+class RobotDeleteView(generics.DestroyAPIView):
+    queryset = Robot.objects.all()
+    serializer_class = RobotSerializer
+    lookup_field = 'serial'
+
+    def delete(self, request, *args, **kwargs):
+        # Получить робота по serial
+        robot = self.get_object()
+        # Сохранить информацию о роботе для вывода
+        model = robot.model
+        version = robot.version
+        serial = robot.serial
+        # Удалить робота из базы данных
+        robot.delete()
+        # Вернуть ответ с сообщением об успешном удалении в формате JSON
+        return Response({"message": f"Робот {model} {version} с серийным номером {serial} удален."})

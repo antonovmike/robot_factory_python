@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from robots.views import RobotCreateView, RobotReportView
+from robots.views import RobotCreateView, RobotReportView, RobotDeleteView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('robots/create', RobotCreateView.as_view(), name='robot-create'),
     path('robots/report', RobotReportView.as_view(), name='robot-report'),
+    path('robots/delete/<str:serial>', RobotDeleteView.as_view(), name='robot-delete'),
 ]

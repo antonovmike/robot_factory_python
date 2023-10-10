@@ -1,13 +1,17 @@
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import FileResponse, JsonResponse
-from django.utils import timezone
 from django.db.models import Count
+from django.db.models.signals import post_save
+from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.dispatch import receiver
 from openpyxl import Workbook
 
 from rest_framework import generics
 from rest_framework.response import Response
+
+from orders.models import Order
 
 from .models import Robot
 from .serializers import RobotSerializer
@@ -121,6 +125,8 @@ class RobotDeleteView(generics.DestroyAPIView):
 
 
 class RobotChecker(View):
+    order_queue = RobotOrderQueue()
+
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -129,10 +135,31 @@ class RobotChecker(View):
         data = json.loads(request.body)
         model = data.get('model')
         version = data.get('version')
+        robot_serial = model + version
 
         if Robot.objects.filter(model=model, version=version).exists():
             print("Robot " + model + " " + version + " found")
+            for order in self.order_queue.get_orders():
+                if order.robot_serial == robot_serial:
+                    print(f"Robot {model} {version} is now available in DB")
+                    self.order_queue.remove_order(order)
             return JsonResponse({"exists": True})
         else:
             print("Robot " + model + " " + version + " not found")
+            # Добавить заказ в очередь
+            order = Order(robot_serial=robot_serial)
+            self.order_queue.add_order(order)
             return JsonResponse({"exists": False})
+
+
+@receiver(post_save, sender=Robot)
+def robot_created(sender, instance, created, **kwargs):
+    if created:
+        model = instance.model
+        version = instance.version
+        robot_serial = model + version
+
+        for order in RobotChecker.order_queue.get_orders():
+            if order.robot_serial == robot_serial:
+                print(f"Robot {model} {version} is now available")
+                RobotChecker.order_queue.remove_order(order)

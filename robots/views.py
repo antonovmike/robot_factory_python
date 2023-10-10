@@ -15,6 +15,20 @@ from .serializers import RobotSerializer
 import json
 
 
+class RobotOrderQueue:
+    def __init__(self):
+        self.queue = []
+
+    def add_order(self, order):
+        self.queue.append(order)
+
+    def remove_order(self, order):
+        self.queue.remove(order)
+
+    def get_orders(self):
+        return self.queue
+
+
 class RobotCreateView(generics.CreateAPIView):
     queryset = Robot.objects.all()
     serializer_class = RobotSerializer

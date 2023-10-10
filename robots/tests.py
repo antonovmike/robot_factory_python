@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -7,6 +8,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.test import APIClient
 
 from robots.models import Robot
+from orders.models import Order
+from customers.models import Customer
 from robots.serializers import RobotSerializer
 
 
@@ -100,3 +103,31 @@ class RobotAPITestCase(TestCase):
         content = list(response.streaming_content) # Преобразовать генератор в список
         self.assertTrue(b'A' in content[0]) # Проверить, что первый элемент списка содержит букву A
         self.assertTrue(b'E' in content[1]) # Проверить, что второй элемент списка содержит букву E
+
+
+class RobotCheckerTestCase(TestCase):
+    def setUp(self):
+        # Создать клиент для отправки запросов
+        self.client = APIClient()
+        # Создать заказчика в базе данных
+        self.customer = Customer.objects.create(email="customer@test.org")
+        # Создать несколько роботов в базе данных
+        self.robot1 = Robot.objects.create(model="A1", version="B2", created="2023-10-06 11:09:22")
+        self.robot2 = Robot.objects.create(model="C3", version="D4", created="2023-10-07 12:10:23")
+        # Создать заказ в базе данных
+        self.order = Order.objects.create(customer=self.customer, robot_serial="A1B2")
+        # Получить URL для API-endpoint создания робота
+        self.check_url = reverse('robot-check')
+
+    def test_robot_checker_robot_exists(self):
+        data = {"model":"A1", "version":"B2"}
+        response = self.client.post(self.check_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), {"exists": True})
+
+    def test_robot_checker_robot_not_exists(self):
+        data = {"model":"E5", "version":"F6"}
+        response = self.client.post(self.check_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), {"exists": False})
+

@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import FileResponse, JsonResponse
 from django.utils import timezone
 from django.db.models import Count
+from django.utils.decorators import method_decorator
 from openpyxl import Workbook
 
 from rest_framework import generics
@@ -105,9 +106,12 @@ class RobotDeleteView(generics.DestroyAPIView):
         return Response({"message": f"Робот {model} {version} с серийным номером {serial} удален."})
 
 
-@csrf_exempt
-def check_robot_exists(request):
-    if request.method == 'POST':
+class RobotChecker(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request):
         data = json.loads(request.body)
         model = data.get('model')
         version = data.get('version')
@@ -118,5 +122,3 @@ def check_robot_exists(request):
         else:
             print("\t not found")
             return JsonResponse({"exists": False})
-    else:
-        return JsonResponse({"error": "Invalid request method"})

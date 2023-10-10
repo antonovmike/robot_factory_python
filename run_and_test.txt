@@ -13,6 +13,4 @@ REMOVE
 curl -X DELETE 'http://127.0.0.1:8000/robots/remove/B1002'
 
 Check if robot exists
-curl -X POST -H "Content-Type: application/json" -d '{"model": "C1", "version": "C1"}' htt
-p://127.0.0.1:8000/robots/check
-{"exists": true}
+curl -X POST -H "Content-Type: application/json" -d '{"model": "C1", "version": "C1"}' http://127.0.0.1:8000/robots/check

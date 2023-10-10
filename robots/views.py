@@ -1,5 +1,6 @@
 from django.views import View
-from django.http import FileResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.http import FileResponse, JsonResponse
 from django.utils import timezone
 from django.db.models import Count
 from openpyxl import Workbook
@@ -9,6 +10,8 @@ from rest_framework.response import Response
 
 from .models import Robot
 from .serializers import RobotSerializer
+
+import json
 
 
 class RobotCreateView(generics.CreateAPIView):
@@ -100,3 +103,20 @@ class RobotDeleteView(generics.DestroyAPIView):
         robot.delete()
         # Вернуть ответ с сообщением об успешном удалении в формате JSON
         return Response({"message": f"Робот {model} {version} с серийным номером {serial} удален."})
+
+
+@csrf_exempt
+def check_robot_exists(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        model = data.get('model')
+        version = data.get('version')
+
+        if Robot.objects.filter(model=model, version=version).exists():
+            print("\tfound")
+            return JsonResponse({"exists": True})
+        else:
+            print("\t not found")
+            return JsonResponse({"exists": False})
+    else:
+        return JsonResponse({"error": "Invalid request method"})

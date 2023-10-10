@@ -117,8 +117,8 @@ class RobotChecker(View):
         version = data.get('version')
 
         if Robot.objects.filter(model=model, version=version).exists():
-            print("\tfound")
+            print("Robot " + model + " " + version + " found")
             return JsonResponse({"exists": True})
         else:
-            print("\t not found")
+            print("Robot " + model + " " + version + " not found")
             return JsonResponse({"exists": False})

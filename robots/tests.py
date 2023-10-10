@@ -1,4 +1,6 @@
 import json
+from django.core import mail
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -131,3 +133,41 @@ class RobotCheckerTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content), {"exists": False})
 
+
+class RobotEmailTestCase(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.customer = Customer.objects.create(email="customer@test.org")
+
+        self.robot1 = Robot.objects.create(model="A1", version="B2", created="2023-10-06 11:09:22")
+        self.robot2 = Robot.objects.create(model="C3", version="D4", created="2023-10-07 12:10:23")
+
+        self.order = Order.objects.create(customer=self.customer, robot_serial="E5F6")
+
+        self.check_url = reverse('robot-check')
+
+    def test_robot_checker_send_email(self):
+        data = {"model":"E5", "version":"F6"}
+        response = self.client.post(self.check_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), {"exists": False})
+        self.assertTrue(Order.objects.filter(customer=self.customer, robot_serial="E5F6").exists())
+
+        robot3 = Robot.objects.create(model="E5", version="F6", created="2023-10-08 13:11:24")
+
+        self.assertFalse(Order.objects.filter(customer=self.customer, robot_serial="E5F6").exists())
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+
+        # Проверить тему и адресата
+        self.assertEqual(email.subject, 'Заказанный вами робот теперь доступен')
+        self.assertEqual(email.to, ['customer@test.org'])
+
+        # Проверить, что отправитель письма соответствует ожидаемому
+        self.assertEqual(email.from_email, settings.EMAIL_HOST_USER)
+
+        # Проверить, что текст письма соответствует ожидаемому
+        expected_message = f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели E5, версии F6.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами'
+        self.assertEqual(email.body, expected_message)

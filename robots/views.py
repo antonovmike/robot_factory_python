@@ -132,26 +132,6 @@ class RobotChecker(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    # def post(self, request):
-    #     data = json.loads(request.body)
-    #     model = data.get('model')
-    #     version = data.get('version')
-    #     robot_serial = model + version
-
-    #     if Robot.objects.filter(model=model, version=version).exists():
-    #         print("Robot " + model + " " + version + " found")
-    #         for order in self.order_queue.get_orders():
-    #             if order.robot_serial == robot_serial:
-    #                 print(f"Robot {model} {version} is now available")
-    #                 self.order_queue.remove_order(order)
-    #         return JsonResponse({"exists": True})
-    #     else:
-    #         print("Robot " + model + " " + version + " not found")
-    #         # Добавить заказ в очередь
-    #         order = Order(robot_serial=robot_serial)
-    #         self.order_queue.add_order(order)
-    #         return JsonResponse({"exists": False})
-
     def post(self, request):
         data = json.loads(request.body)
         model = data.get('model')

@@ -14,8 +14,8 @@ from rest_framework.response import Response
 
 from orders.models import Order
 
-from .models import Robot
-from .serializers import RobotSerializer
+from .models import Customer, Robot
+from .serializers import RobotSerializer, CustomerSerializer
 
 import json
 
@@ -137,6 +137,9 @@ class RobotChecker(View):
         model = data.get('model')
         version = data.get('version')
         robot_serial = model + version
+        login = data.get('login')
+        password = data.get('password')
+        customer = Customer.objects.get(login=login, password=password)
 
         if Robot.objects.filter(model=model, version=version).exists():
             print("Robot " + model + " " + version + " found")
@@ -149,7 +152,7 @@ class RobotChecker(View):
                         'Заказанный вами робот теперь доступен',
                         f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели {model}, версии {version}.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами',
                         'from@example.com',
-                        ['customer@test.org'],
+                        [customer.email],
                         fail_silently=False,
                     )
             return JsonResponse({"exists": True})
@@ -172,3 +175,8 @@ def robot_created(sender, instance, created, **kwargs):
             if order.robot_serial == robot_serial:
                 print(f"Robot {model} {version} is now available")
                 RobotChecker.order_queue.remove_order(order)
+
+
+class CustomerCreateView(generics.CreateAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer

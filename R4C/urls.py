@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from robots.views import RobotCreateView, RobotReportView, RobotDeleteView, RobotChecker
+from robots.views import RobotCreateView, RobotReportView, RobotDeleteView, RobotChecker, CustomerCreateView
 
 
 urlpatterns = [
@@ -25,4 +25,5 @@ urlpatterns = [
     path('robots/report', RobotReportView.as_view(), name='robot-report'),
     path('robots/delete/<str:serial>', RobotDeleteView.as_view(), name='robot-delete'),
     path('robots/order', RobotChecker.as_view(), name='robot-check'),
+    path('user/create', CustomerCreateView.as_view(), name='customer-create'),
 ]

@@ -168,13 +168,10 @@ class RobotEmailTestCase(TestCase):
         response = self.client.post(self.check_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # self.assertEqual(json.loads(response.content), {"exists": False})
-        # self.assertTrue(Order.objects.filter(customer=self.customer, robot_serial="T4T4").exists())
+        self.assertEqual(json.loads(response.content), {"exists": False})
 
-        # robot3 = Robot.objects.create(serial="T5T5", model="T5", version="T5", created="2023-10-08 13:11:24")
-
-        # self.assertFalse(Order.objects.filter(customer=self.customer, robot_serial="T5T5").exists())
-        # self.assertEqual(len(mail.outbox), 1)
+        self.assertFalse(Order.objects.filter(customer=self.customer, robot_serial="T5T5").exists())
+        self.assertEqual(len(mail.outbox), 0)
 
         # email = mail.outbox[0]
 

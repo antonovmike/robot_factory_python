@@ -115,15 +115,14 @@ class RobotCheckerTestCase(TestCase):
         # Создать заказчика в базе данных
         self.customer = Customer.objects.create(email="customer@test.org")
         # Создать несколько роботов в базе данных
-        self.robot1 = Robot.objects.create(model="A1", version="B2", created="2023-10-06 11:09:22")
-        self.robot2 = Robot.objects.create(model="C3", version="D4", created="2023-10-07 12:10:23")
+        self.robot1 = Robot.objects.create(model="T1", version="T1", created="2023-10-06 11:09:22")
         # Создать заказ в базе данных
-        self.order = Order.objects.create(customer=self.customer, robot_serial="A1B2")
+        self.order = Order.objects.create(customer=self.customer, robot_serial=self.robot1.serial)
         # Получить URL для API-endpoint создания робота
         self.check_url = reverse('robot-check')
 
     def test_robot_checker_robot_exists(self):
-        data = {"model":"A1", "version":"B2"}
+        data = {"model":"T1", "version":"T1"}
         response = self.client.post(self.check_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content), {"exists": True})

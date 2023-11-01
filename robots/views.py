@@ -138,7 +138,8 @@ class RobotChecker(View):
         robot_serial = model + version
         login = data.get('login')
         password = data.get('password')
-        customer = Customer.objects.get(login=login, password=password)
+        # customer = Customer.objects.get(login=login, password=password)
+        customer = Customer.objects.filter(login=login, password=password).first()
 
         if Robot.objects.filter(model=model, version=version).exists():
             print("Robot " + model + " " + version + " found")

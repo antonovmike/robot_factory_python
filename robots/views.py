@@ -106,7 +106,6 @@ class RobotReportView(View):
         return response
 
 
-
 class RobotDeleteView(generics.DestroyAPIView):
     queryset = Robot.objects.all()
     serializer_class = RobotSerializer

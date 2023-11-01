@@ -90,11 +90,12 @@ class RobotAPITestCase(TestCase):
             serializer.is_valid(raise_exception=True)
 
     def test_robot_report_view(self):
-        Robot.objects.create(model="A1", version="B2", created="2023-10-06 11:09:22")
-        Robot.objects.create(model="A2", version="F3", created="2023-10-06 11:09:22")
-        Robot.objects.create(model="E2", version="R4", created="2023-10-07 12:10:23")
-        Robot.objects.create(model="E5", version="T1", created="2023-10-07 12:10:23")
-        Robot.objects.create(model="E8", version="W2", created="2023-10-07 12:10:23")
+        now = timezone.now()
+        Robot.objects.create(model="A1", version="B2", created=now)
+        Robot.objects.create(model="A2", version="F3", created=now)
+        Robot.objects.create(model="E2", version="R4", created=now)
+        Robot.objects.create(model="E5", version="T1", created=now)
+        Robot.objects.create(model="E8", version="W2", created=now)
         # Получить URL для API-endpoint создания робота
         report_url = reverse('robot-report')
         # Отправить GET-запрос к RobotReportView

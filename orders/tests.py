@@ -12,32 +12,27 @@ from orders.models import Order
 from customers.models import Customer
 from robots.models import Robot
 
-class OrderAPITestCase(TestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.robot1 = Robot.objects.create(model="A1", version="B2", created="2023-10-06 11:09:22")
-        self.robot2 = Robot.objects.create(model="C3", version="D4", created="2023-10-07 12:10:23")
-        self.create_url = reverse('robot-create')
-
 class OrderCheckerTestCase(TestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.customer = Customer.objects.create(email="customer@test.org")
-        self.robot1 = Robot.objects.create(model="T1", version="T1", created="2023-10-06 11:09:22")
-        self.order = Order.objects.create(customer=self.customer, robot=self.robot1, order_date=datetime.now())
-        self.check_url = reverse('robot-check')
+   def setUp(self):
+       self.client = APIClient()
+       self.customer = Customer.objects.create(email="customer@test.org")
+       self.robot1 = Robot.objects.create(model="T1", version="T1", created="2023-10-06 11:09:22")
+       self.order = Order.objects.create(customer=self.customer, robot=self.robot1, order_date=datetime.now())
+       self.check_url = reverse('robot-check')
+       self.nonexistent_robot = Robot.objects.create(model="Nonexistent", version="Nonexistent", created="2023-10-08 12:10:23")
 
-    def test_robot_checker_robot_exists(self):
-        data = {"model":"T1", "version":"T1"}
-        response = self.client.post(self.check_url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), {"exists": True})
+   def test_robot_checker_robot_exists(self):
+       data = {"model":"T1", "version":"T1"}
+       response = self.client.post(self.check_url, data, format='json')
+       self.assertEqual(response.status_code, status.HTTP_200_OK)
+       self.assertEqual(json.loads(response.content), {"exists": True})
 
-    def test_robot_checker_robot_not_exists(self):
-        data = {"model":"E5", "version":"F6"}
-        response = self.client.post(self.check_url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), {"exists": False})
+   def test_robot_checker_robot_not_exists(self):
+       data = {"model": self.nonexistent_robot.model, "version": self.nonexistent_robot.version}
+       response = self.client.post(self.check_url, data, format='json')
+       self.assertEqual(response.status_code, status.HTTP_200_OK)
+       self.assertEqual(json.loads(response.content), {"exists": False})
+
 
 
 # class RobotEmailTestCase(TestCase):

@@ -1,6 +1,5 @@
 import json
 from django.core import mail
-from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -96,11 +95,11 @@ class RobotAPITestCase(TestCase):
         Robot.objects.create(model="E2", version="R4", created=now)
         Robot.objects.create(model="E5", version="T1", created=now)
         Robot.objects.create(model="E8", version="W2", created=now)
-        # Получить URL для API-endpoint создания робота
+
         report_url = reverse('robot-report')
-        # Отправить GET-запрос к RobotReportView
+
         response = self.client.get(report_url)
-        # Проверить, что статус-код ответа равен 200 (OK)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Проверить, что в ответе есть данные для каждой страницы
         content = list(response.streaming_content) # Преобразовать генератор в список
@@ -110,15 +109,10 @@ class RobotAPITestCase(TestCase):
 
 class RobotCheckerTestCase(TestCase):
     def setUp(self):
-        # Создать клиент для отправки запросов
         self.client = APIClient()
-        # Создать заказчика в базе данных
         self.customer = Customer.objects.create(email="customer@test.org")
-        # Создать несколько роботов в базе данных
         self.robot1 = Robot.objects.create(model="T1", version="T1", created="2023-10-06 11:09:22")
-        # Создать заказ в базе данных
         self.order = Order.objects.create(customer=self.customer, robot_serial=self.robot1.serial)
-        # Получить URL для API-endpoint создания робота
         self.check_url = reverse('robot-check')
 
     def test_robot_checker_robot_exists(self):

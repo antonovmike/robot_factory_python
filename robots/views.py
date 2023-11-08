@@ -143,7 +143,6 @@ class RobotChecker(View):
         robot_serial = model + version
         login = data.get('login')
         password = data.get('password')
-        # customer = Customer.objects.get(login=login, password=password)
         customer = Customer.objects.filter(login=login, password=password).first()
 
         if Robot.objects.filter(model=model, version=version).exists():
@@ -152,7 +151,6 @@ class RobotChecker(View):
                 if order.robot_serial == robot_serial:
                     print(f"Robot {model} {version} is now available")
                     self.order_queue.remove_order(order)
-                    # Отправить письмо заказчику
                     send_mail(
                         'Заказанный вами робот теперь доступен',
                         f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели {model}, версии {version}.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами',

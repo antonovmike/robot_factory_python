@@ -56,21 +56,25 @@ class WorkbookCreator:
         self.wb.remove(self.wb.active)
 
     def create_workbook(self):
-        current_letter = ''
-        for row_data in self.data:
-            letter = row_data['model'][0]
-            if letter != current_letter:
-                current_letter = letter
-                ws = self.wb.create_sheet(title=letter)
-                headers = ["Модель", "Версия", "Количество за неделю"]
-                for col_num, column_title in enumerate(headers, 1):
-                    col_letter = ws.cell(row=1, column=col_num).column_letter
-                    ws['{}1'.format(col_letter)] = column_title
-                    ws.column_dimensions[col_letter].width = 15
-            row_num = ws.max_row + 1
-            ws.cell(row=row_num, column=1, value=row_data['model'])
-            ws.cell(row=row_num, column=2, value=row_data['version'])
-            ws.cell(row=row_num, column=3, value=row_data['total'])
+        if not self.data:
+            ws = self.wb.create_sheet(title="No data")
+            ws['A1'] = "No data for the last week"
+        else:
+            current_letter = ''
+            for row_data in self.data:
+                letter = row_data['model'][0]
+                if letter != current_letter:
+                    current_letter = letter
+                    ws = self.wb.create_sheet(title=letter)
+                    headers = ["Модель", "Версия", "Количество за неделю"]
+                    for col_num, column_title in enumerate(headers, 1):
+                        col_letter = ws.cell(row=1, column=col_num).column_letter
+                        ws['{}1'.format(col_letter)] = column_title
+                        ws.column_dimensions[col_letter].width = 15
+                row_num = ws.max_row + 1
+                ws.cell(row=row_num, column=1, value=row_data['model'])
+                ws.cell(row=row_num, column=2, value=row_data['version'])
+                ws.cell(row=row_num, column=3, value=row_data['total'])
         return self.wb
 
 

@@ -180,8 +180,3 @@ def robot_created(sender, instance, created, **kwargs):
             if order.robot_serial == robot_serial:
                 print(f"Robot {model} {version} is now available")
                 RobotChecker.order_queue.remove_order(order)
-
-
-# class CustomerCreateView(generics.CreateAPIView):
-#     queryset = Customer.objects.all()
-#     serializer_class = CustomerSerializer

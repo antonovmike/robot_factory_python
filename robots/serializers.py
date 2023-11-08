@@ -4,7 +4,6 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from .models import Robot
-# from .models import Customer
 
 
 class RobotSerializer(serializers.ModelSerializer):
@@ -24,9 +23,3 @@ class RobotSerializer(serializers.ModelSerializer):
         if data['created'] > timezone.now():
             raise serializers.ValidationError("Creation date should not be in future.")
         return data
-
-
-# class CustomerSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Customer
-#         fields = ['name', 'email', 'login', 'password']

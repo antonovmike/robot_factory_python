@@ -1,4 +1,4 @@
-from django.db import models
+from customers.models import Customer, models
 
 
 class Robot(models.Model):
@@ -17,22 +17,3 @@ class Robot(models.Model):
             self.serial = self.model + count
         # Вызвать метод родительского класса
         super().save(*args, **kwargs)
-
-
-class Customer(models.Model):
-    name = models.TextField(blank=False, null=False)
-    email = models.EmailField(blank=False, null=False, unique=True)
-    login = models.TextField(blank=False, null=False, unique=True)
-    password = models.TextField(blank=False, null=False)
-
-    class Meta:
-        db_table = 'customers'
-
-
-class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    robot = models.ForeignKey(Robot, on_delete=models.CASCADE)
-    order_date = models.DateTimeField(blank=False, null=False)
-
-    class Meta:
-        db_table = 'orders'

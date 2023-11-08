@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+customers/migrations/*
+!customers/migrations/init.py
+orders/migrations/*
+!orders/migrations/init.py
+robots/migrations/*
+!robots/migrations/init.py
+
 # Distribution / packaging
 .Python
 build/

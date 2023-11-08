@@ -14,8 +14,9 @@ from rest_framework.response import Response
 
 from orders.models import Order
 
-from .models import Customer, Robot
-from .serializers import RobotSerializer, CustomerSerializer
+from .models import Robot
+from .serializers import RobotSerializer
+from customers.views import Customer
 
 import json
 
@@ -181,6 +182,6 @@ def robot_created(sender, instance, created, **kwargs):
                 RobotChecker.order_queue.remove_order(order)
 
 
-class CustomerCreateView(generics.CreateAPIView):
-    queryset = Customer.objects.all()
-    serializer_class = CustomerSerializer
+# class CustomerCreateView(generics.CreateAPIView):
+#     queryset = Customer.objects.all()
+#     serializer_class = CustomerSerializer

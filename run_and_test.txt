@@ -1,5 +1,6 @@
 python3 manage.py test
 python3 manage.py runserver
+python3 manage.py runserver --verbosity 0
 
 DOWNLOAD WEEKLY REPORT
 w3m http://127.0.0.1:8000/robots/report
@@ -16,4 +17,4 @@ Check if robot exists
 curl -X POST -H "Content-Type: application/json" -d '{"model": "E1", "version": "E1"}' http://127.0.0.1:8000/robots/order
 
 ADD USER
-curl -X POST -H "Content-Type: application/json" -d '{"name":"Kurmanjan Datka", "email":"kurmanjan@mail.com", "login":"kurmanjan_1", "password":"pass2"}' http://localhost:8000/user/create
+curl -X POST -H "Content-Type: application/json" -d '{"name":"New One", "email":"new@one.com", "login":"new", "password":"one"}' http://localhost:8000/user/create

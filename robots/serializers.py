@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from .models import Robot
-from .models import Customer
+# from .models import Customer
 
 
 class RobotSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class RobotSerializer(serializers.ModelSerializer):
         return data
 
 
-class CustomerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Customer
-        fields = ['name', 'email', 'login', 'password']
+# class CustomerSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Customer
+#         fields = ['name', 'email', 'login', 'password']

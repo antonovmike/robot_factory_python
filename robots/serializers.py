@@ -19,7 +19,7 @@ class RobotSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Invalid model. First character must be a letter, second character must be a number.")
         if not re.match(pattern, data['version']):
             raise serializers.ValidationError("Invalid version. First character must be a letter, second character must be a number.")
-        # Проверить что дата создания не превышает текущую дату
-        if data['created'] > timezone.now():
+        # Проверить что дата создания не превышает текущую дату, если она присутствует
+        if 'created' in data and data['created'] > timezone.now():
             raise serializers.ValidationError("Creation date should not be in future.")
         return data

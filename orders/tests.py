@@ -68,10 +68,19 @@ class RobotEmailTestCase(TestCase):
         robot_exists = Robot.objects.filter(serial="T3T3", model="T3", version="T3").exists()
         self.assertTrue(robot_exists)
 
+        test_topic = 'Заказанный вами робот теперь доступен'
+        test_body = f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели T3, версии T3.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами'
+
         mail.send_mail(
-            'Заказанный вами робот теперь доступен',
-            f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели T3, версии T3.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами',
+            test_topic,
+            test_body,
             'from@example.com',
             [self.customer.email],
             fail_silently=False,
         )
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, test_topic)
+        self.assertEqual(email.body, test_body)

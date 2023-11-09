@@ -45,7 +45,7 @@ class RobotEmailTestCase(TestCase):
         robot = Robot.objects.get(serial="T2T2")
         self.order = Order.objects.create(customer=self.customer, robot=robot, order_date=datetime.now())
 
-        self.check_url = reverse('robot-check')
+        self.check_url = reverse('order-check')
 
     def test_send_email(self):
         mail.send_mail(

@@ -1,5 +1,3 @@
-# import json
-# from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -9,8 +7,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.test import APIClient
 
 from robots.models import Robot
-# from orders.models import Order
-# from customers.models import Customer
 from robots.serializers import RobotSerializer
 
 

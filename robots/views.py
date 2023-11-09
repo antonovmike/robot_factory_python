@@ -123,13 +123,13 @@ class RobotDeleteView(generics.DestroyAPIView):
         model = robot.model
         version = robot.version
         serial = robot.serial
-        # Удалить робота из базы данных
+
         robot.delete()
-        # Вернуть ответ с сообщением об успешном удалении в формате JSON
+
         return Response({"message": f"Робот {model} {version} с серийным номером {serial} удален."})
 
 
-class RobotChecker(View):
+class RobotOrderHandler(View):
     order_queue = RobotOrderQueue()
 
     @method_decorator(csrf_exempt)
@@ -174,7 +174,7 @@ def robot_created(sender, instance, created, **kwargs):
         version = instance.version
         robot_serial = model + version
 
-        for order in RobotChecker.order_queue.get_orders():
+        for order in RobotOrderHandler.order_queue.get_orders():
             if order.robot_serial == robot_serial:
                 print(f"Robot {model} {version} is now available")
-                RobotChecker.order_queue.remove_order(order)
+                RobotOrderHandler.order_queue.remove_order(order)

@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from robots.views import RobotCreateView, RobotReportView, RobotDeleteView, OrderHandler
+from robots.views import RobotCreateView, RobotReportView, RobotDeleteView
+from orders.views import OrderHandler
 from customers.views import CustomerCreateView
 
 

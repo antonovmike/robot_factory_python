@@ -21,7 +21,7 @@ from customers.views import Customer
 import json
 
 
-class RobotOrderQueue:
+class OrderQueue:
     def __init__(self):
         self.queue = []
 
@@ -119,7 +119,7 @@ class RobotDeleteView(generics.DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         # Получить робота по serial
         robot = self.get_object()
-        # Сохранить информацию о роботе для вывода
+
         model = robot.model
         version = robot.version
         serial = robot.serial
@@ -129,8 +129,8 @@ class RobotDeleteView(generics.DestroyAPIView):
         return Response({"message": f"Робот {model} {version} с серийным номером {serial} удален."})
 
 
-class RobotOrderHandler(View):
-    order_queue = RobotOrderQueue()
+class OrderHandler(View):
+    order_queue = OrderQueue()
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -174,7 +174,7 @@ def robot_created(sender, instance, created, **kwargs):
         version = instance.version
         robot_serial = model + version
 
-        for order in RobotOrderHandler.order_queue.get_orders():
+        for order in OrderHandler.order_queue.get_orders():
             if order.robot_serial == robot_serial:
                 print(f"Robot {model} {version} is now available")
-                RobotOrderHandler.order_queue.remove_order(order)
+                OrderHandler.order_queue.remove_order(order)

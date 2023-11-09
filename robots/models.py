@@ -9,15 +9,15 @@ class Robot(models.Model):
     created = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
-        # Если serial не задан, то сгенерировать его по принципу
+        # If serial is not specified, then generate it according to the principle
         if not self.serial:
             count = Robot.objects.filter(model=self.model).count()
             count += 1
-            # Преобразовать в строку с лидирующими нулями
+            # Convert to string with leading zeros
             count = str(count).zfill(3)
             self.serial = self.model + count
         
-        if not self.created: # Если дата создания не задана
-            self.created = timezone.now() # Установить текущую дату и время
-        # Вызвать метод родительского класса
+        if not self.created: # If the creation date is not specified
+            self.created = timezone.now()
+        # Call a method of the parent class
         super().save(*args, **kwargs)

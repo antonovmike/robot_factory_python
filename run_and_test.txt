@@ -17,4 +17,4 @@ Check if robot exists
 curl -X POST -H "Content-Type: application/json" -d '{"model": "A1", "version": "A1"}' http://127.0.0.1:8000/robots/order
 
 ADD USER
-curl -X POST -H "Content-Type: application/json" -d '{"name":"New One", "email":"new@one.com", "login":"new", "password":"one"}' http://localhost:8000/user/create
+curl -X POST -H "Content-Type: application/json" -d '{"name":"Kurmanjan Datka", "email":"kurmanjan@mail.com", "login":"datka", "password":"18111907"}' http://localhost:8000/user/create

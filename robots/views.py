@@ -1,3 +1,5 @@
+import logging
+
 from django.views import View
 from django.http import FileResponse
 from django.db.models import Count
@@ -76,14 +78,19 @@ class RobotReportView(View):
     def get(self, request):
         report_generator = ReportGenerator()
         data = report_generator.generate_report()
- 
+
+        # FIX IT
+        total_robots = Robot.objects.all().count()
+        # print(f"Total amount of robots on {timezone.now().date()} is {total_robots}")
+        logging.info(f"Total amount of robots on {timezone.now().date()} is {total_robots}")
+
         workbook_creator = WorkbookCreator(data)
         wb = workbook_creator.create_workbook()
- 
+
         file_handler = FileHandler(wb)
         filepath = file_handler.save_workbook_to_file()
         response = file_handler.create_file_response(filepath)
- 
+
         return response
 
 
@@ -93,7 +100,7 @@ class RobotDeleteView(generics.DestroyAPIView):
     lookup_field = 'serial'
 
     def delete(self, request, *args, **kwargs):
-        # Получить робота по serial
+        # Get a robot by serial
         robot = self.get_object()
 
         model = robot.model

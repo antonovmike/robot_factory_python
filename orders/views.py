@@ -1,5 +1,4 @@
 from django.views import View
-from django.utils import timezone
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.db.models.signals import post_save
@@ -53,7 +52,7 @@ class OrderHandler(View):
             return JsonResponse({"exists": True})
         else:
             print("Robot " + model + " " + version + " not found")
-            # Добавить заказ в очередь
+            # Add an order to the queue
             order = Order(robot_serial=robot_serial)
             self.order_queue.add_order(order)
             return JsonResponse({"exists": False})

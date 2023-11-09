@@ -6,6 +6,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import json
 
+from robots.models import Robot
+
 from .models import Order
 from customers.models import Customer
 
@@ -24,37 +26,37 @@ class OrderQueue:
 
 
 class OrderHandler(View):
-   order_queue = OrderQueue()
+    order_queue = OrderQueue()
+ 
+    def post(self, request):
+        data = json.loads(request.body)
+        model = data.get('model')
+        version = data.get('version')
+        robot_serial = model + version
+        login = data.get('login')
+        password = data.get('password')
+        customer = Customer.objects.filter(login=login, password=password).first()
 
-   def post(self, request):
-       data = json.loads(request.body)
-       model = data.get('model')
-       version = data.get('version')
-       robot_serial = model + version
-       login = data.get('login')
-       password = data.get('password')
-       customer = Customer.objects.filter(login=login, password=password).first()
-
-       if Order.objects.filter(robot_serial=robot_serial).exists():
-           print("Robot " + model + " " + version + " found")
-           for order in self.order_queue.get_orders():
-               if order.robot_serial == robot_serial:
-                  print(f"Robot {model} {version} is now available")
-                  self.order_queue.remove_order(order)
-                  send_mail(
-                      'Заказанный вами робот теперь доступен',
-                      f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели {model}, версии {version}.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами',
-                      'from@example.com',
-                      [customer.email],
-                      fail_silently=False,
-                  )
-           return JsonResponse({"exists": True})
-       else:
-           print("Robot " + model + " " + version + " not found")
-           # Добавить заказ в очередь
-           order = Order(robot_serial=robot_serial)
-           self.order_queue.add_order(order)
-           return JsonResponse({"exists": False})
+        if Robot.objects.filter(model=model, version=version).exists():
+            print("Robot " + model + " " + version + " found")
+            for order in self.order_queue.get_orders():
+                if order.robot_serial == robot_serial:
+                    print(f"Robot {model} {version} is now available")
+                    self.order_queue.remove_order(order)
+                    send_mail(
+                        'Заказанный вами робот теперь доступен',
+                        f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели {model}, версии {version}.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами',
+                        'from@example.com',
+                        [customer.email],
+                        fail_silently=False,
+                    )
+            return JsonResponse({"exists": True})
+        else:
+            print("Robot " + model + " " + version + " not found")
+            # Добавить заказ в очередь
+            order = Order(robot_serial=robot_serial)
+            self.order_queue.add_order(order)
+            return JsonResponse({"exists": False})
 
 
 @receiver(post_save, sender=Order)

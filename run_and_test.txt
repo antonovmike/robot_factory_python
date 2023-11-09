@@ -7,14 +7,14 @@ w3m http://127.0.0.1:8000/robots/report
 
 CREATE
 Параметр "serial" будет игнорироваться, например, если указать "serial":"B1BBB", то "serial" всё равно будет расчитывать от общего числа произведенных роботов указанной модели
-curl -X POST -H "Content-Type: application/json" -d '{"model":"B1","version":"A3","created":"2023-11-07 14:12:34"}' http://127.0.0.1:8000/robots/create
+curl -X POST -H "Content-Type: application/json" -d '{"model":"A1","version":"A1","created":"2023-11-07 14:12:34"}' http://127.0.0.1:8000/robots/create
 ORDER
 curl -X POST -H "Content-Type: application/json" -d '{"login": "mary", "password": "1234","model": "C3", "version": "B3"}' http://127.0.0.1:8000/robots/order
 DELETE
 curl -X DELETE 'http://127.0.0.1:8000/robots/delete/A1001'
 
 Check if robot exists
-curl -X POST -H "Content-Type: application/json" -d '{"model": "E1", "version": "E1"}' http://127.0.0.1:8000/robots/order
+curl -X POST -H "Content-Type: application/json" -d '{"model": "A1", "version": "A1"}' http://127.0.0.1:8000/robots/order
 
 ADD USER
 curl -X POST -H "Content-Type: application/json" -d '{"name":"New One", "email":"new@one.com", "login":"new", "password":"one"}' http://localhost:8000/user/create

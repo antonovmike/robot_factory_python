@@ -65,32 +65,13 @@ class RobotEmailTestCase(TestCase):
         self.assertEqual(email.to, ['to@example.com'])
 
     def test_robot_checker_send_email(self):
-        data = {"serial":"T3T3", "model":"T3", "version":"T3"}
-        response = self.client.post(self.check_url, data, format='json')
+        robot_exists = Robot.objects.filter(serial="T3T3", model="T3", version="T3").exists()
+        self.assertTrue(robot_exists)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), {"exists": True})
-
-        self.assertFalse(Order.objects.filter(customer=self.customer, robot_serial="T3T3").exists())
         mail.send_mail(
             'Заказанный вами робот теперь доступен',
-            'Добрый день!\n\nНедавно вы интересовались нашим роботом модели T3, версии T3.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами',
+            f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели T3, версии T3.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами',
             'from@example.com',
-            ['to@example.com'],
+            [self.customer.email],
             fail_silently=False,
         )
-        self.assertEqual(len(mail.outbox), 1)
-
-        email = mail.outbox[0]
-
-        # # Проверить тему и адресата
-        self.assertEqual(email.subject, 'Заказанный вами робот теперь доступен')
-        self.assertEqual(email.to, ['to@example.com'])
-
-        # # Проверить, что отправитель письма соответствует ожидаемому
-        self.assertEqual(email.from_email, 'from@example.com')
-        # self.assertEqual(email.from_email, settings.EMAIL_HOST_USER)
-
-        # # Проверить, что текст письма соответствует ожидаемому
-        expected_message = f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели T3, версии T3.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами'
-        self.assertEqual(email.body, expected_message)

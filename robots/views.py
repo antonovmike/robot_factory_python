@@ -1,12 +1,7 @@
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt
-from django.http import FileResponse, JsonResponse
-from django.core.mail import send_mail
+from django.http import FileResponse
 from django.db.models import Count
-from django.db.models.signals import post_save
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.dispatch import receiver
 from openpyxl import Workbook
 
 from rest_framework import generics
@@ -15,7 +10,6 @@ from rest_framework.response import Response
 from .models import Robot
 from .serializers import RobotSerializer
 
-import json
 
 class RobotCreateView(generics.CreateAPIView):
    queryset = Robot.objects.all()
@@ -79,12 +73,18 @@ class FileHandler:
 
 
 class RobotReportView(View):
-   def get(self, request):
-       report_generator = ReportGenerator()
-       data = report_generator.generate_report()
-
-       workbook_creator = WorkbookCreator(data)
-       wb = workbook_creator.create_workbook()
+    def get(self, request):
+        report_generator = ReportGenerator()
+        data = report_generator.generate_report()
+ 
+        workbook_creator = WorkbookCreator(data)
+        wb = workbook_creator.create_workbook()
+ 
+        file_handler = FileHandler(wb)
+        filepath = file_handler.save_workbook_to_file()
+        response = file_handler.create_file_response(filepath)
+ 
+        return response
 
 
 class RobotDeleteView(generics.DestroyAPIView):

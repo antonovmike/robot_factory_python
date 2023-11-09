@@ -19,7 +19,7 @@ class OrderCheckerTestCase(TestCase):
         self.customer = Customer.objects.create(email="customer@test.org")
         self.robot1 = Robot.objects.create(model="T1", version="T1", created="2023-10-06 11:09:22")
         self.order = Order.objects.create(customer=self.customer, robot=self.robot1, order_date=datetime.now())
-        self.check_url = reverse('robot-check')
+        self.check_url = reverse('order-check')
 
     def test_robot_checker_robot_exists(self):
         data = {"model":"T1", "version":"T1"}

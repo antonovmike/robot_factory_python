@@ -26,6 +26,6 @@ urlpatterns = [
     path('robots/create', RobotCreateView.as_view(), name='robot-create'),
     path('robots/report', RobotReportView.as_view(), name='robot-report'),
     path('robots/delete/<str:serial>', RobotDeleteView.as_view(), name='robot-delete'),
-    path('robots/order', OrderHandler.as_view(), name='robot-check'),
+    path('orders/order', OrderHandler.as_view(), name='order-check'),
     path('user/create', CustomerCreateView.as_view(), name='customer-create'),
 ]

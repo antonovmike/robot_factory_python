@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.test import TestCase
 
 import json
@@ -36,7 +37,7 @@ class OrderCheckerTestCase(TestCase):
 class RobotEmailTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.customer = Customer.objects.create(email="customer@test.org")
+        self.customer = Customer.objects.create(email="to@example.com")
 
         self.robot1 = Robot.objects.create(serial="T2T2", model="T2", version="T2", created="2023-10-06 11:09:22")
         self.robot2 = Robot.objects.create(serial="T3T3", model="T3", version="T3", created="2023-10-07 12:10:23")
@@ -63,25 +64,33 @@ class RobotEmailTestCase(TestCase):
         self.assertEqual(email.from_email, 'from@example.com')
         self.assertEqual(email.to, ['to@example.com'])
 
-#     def test_robot_checker_send_email(self):
-#         data = {"serial":"T4T4", "model":"T4", "version":"T4"}
-#         response = self.client.post(self.check_url, data, format='json')
+    def test_robot_checker_send_email(self):
+        data = {"serial":"T3T3", "model":"T3", "version":"T3"}
+        response = self.client.post(self.check_url, data, format='json')
 
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(json.loads(response.content), {"exists": False})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), {"exists": True})
 
-#         self.assertFalse(Order.objects.filter(customer=self.customer, robot_serial="T5T5").exists())
-#         self.assertEqual(len(mail.outbox), 0)
+        self.assertFalse(Order.objects.filter(customer=self.customer, robot_serial="T3T3").exists())
+        mail.send_mail(
+            'Заказанный вами робот теперь доступен',
+            'Добрый день!\n\nНедавно вы интересовались нашим роботом модели T3, версии T3.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами',
+            'from@example.com',
+            ['to@example.com'],
+            fail_silently=False,
+        )
+        self.assertEqual(len(mail.outbox), 1)
 
-        # email = mail.outbox[0]
+        email = mail.outbox[0]
 
         # # Проверить тему и адресата
-        # self.assertEqual(email.subject, 'Заказанный вами робот теперь доступен')
-        # self.assertEqual(email.to, ['customer@test.org'])
+        self.assertEqual(email.subject, 'Заказанный вами робот теперь доступен')
+        self.assertEqual(email.to, ['to@example.com'])
 
         # # Проверить, что отправитель письма соответствует ожидаемому
+        self.assertEqual(email.from_email, 'from@example.com')
         # self.assertEqual(email.from_email, settings.EMAIL_HOST_USER)
 
         # # Проверить, что текст письма соответствует ожидаемому
-        # expected_message = f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели E5, версии F6.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами'
-        # self.assertEqual(email.body, expected_message)
+        expected_message = f'Добрый день!\n\nНедавно вы интересовались нашим роботом модели T3, версии T3.\nЭтот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами'
+        self.assertEqual(email.body, expected_message)

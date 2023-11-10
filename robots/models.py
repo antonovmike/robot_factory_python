@@ -21,3 +21,6 @@ class Robot(models.Model):
             self.created = timezone.now()
         # Call a method of the parent class
         super().save(*args, **kwargs)
+    
+    class Meta:
+        db_table = 'robots'

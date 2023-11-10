@@ -18,3 +18,21 @@ curl -X POST -H "Content-Type: application/json" -d '{"model": "A1", "version": 
 
 ADD USER
 curl -X POST -H "Content-Type: application/json" -d '{"name":"Kurmanjan Datka", "email":"kurmanjan@mail.com", "login":"datka", "password":"18111907"}' http://localhost:8000/user/create
+
+
+PostgreSQL:
+
+pip install psycopg2-binary
+Change R4C/settings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'robots',
+        'USER': 'postgres',
+        'PASSWORD': '123',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+python manage.py makemigrations
+python manage.py migrate

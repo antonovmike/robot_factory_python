@@ -7,7 +7,7 @@ w3m http://127.0.0.1:8000/robots/report
 
 CREATE
 Параметр "serial" будет игнорироваться, например, если указать "serial":"B1BBB", то "serial" всё равно будет расчитывать от общего числа произведенных роботов указанной модели
-curl -X POST -H "Content-Type: application/json" -d '{"model":"A1","version":"A1","created":"2023-11-07 14:12:34"}' http://127.0.0.1:8000/robots/create
+curl -X POST -H "Content-Type: application/json" -d '{"model":"J1","version":"J1","created":"2023-11-07 14:12:34"}' http://127.0.0.1:8000/robots/create
 ORDER
 curl -X POST -H "Content-Type: application/json" -d '{"login": "mary", "password": "1234","model": "C3", "version": "B3"}' http://127.0.0.1:8000/robots/order
 DELETE
@@ -23,16 +23,20 @@ curl -X POST -H "Content-Type: application/json" -d '{"name":"Kurmanjan Datka", 
 PostgreSQL:
 
 pip install psycopg2-binary
+.env
 Change R4C/settings.py
+from decouple import config
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'robots',
-        'USER': 'postgres',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 python manage.py makemigrations
 python manage.py migrate
+pip install python-decouple
+

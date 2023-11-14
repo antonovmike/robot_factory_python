@@ -10,23 +10,24 @@ from robots.models import Robot
 from .models import Order
 from customers.models import Customer
 
+
 class OrderQueue:
-   def __init__(self):
-       self.queue = []
+    def __init__(self):
+        self.queue = []
 
-   def add_order(self, order):
-       self.queue.append(order)
+    def add_order(self, order):
+        self.queue.append(order)
 
-   def remove_order(self, order):
-       self.queue.remove(order)
+    def remove_order(self, order):
+        self.queue.remove(order)
 
-   def get_orders(self):
-       return self.queue
+    def get_orders(self):
+        return self.queue
 
 
 class OrderHandler(View):
     order_queue = OrderQueue()
- 
+
     def post(self, request):
         data = json.loads(request.body)
         model = data.get('model')
@@ -60,12 +61,12 @@ class OrderHandler(View):
 
 @receiver(post_save, sender=Order)
 def order_created(sender, instance, created, **kwargs):
-   if created:
-       model = instance.robot.model
-       version = instance.robot.version
-       robot_serial = model + version
+    if created:
+        model = instance.robot.model
+        version = instance.robot.version
+        robot_serial = model + version
 
-       for order in OrderHandler.order_queue.get_orders():
-           if order.robot_serial == robot_serial:
-               print(f"Robot {model} {version} is now available")
-               OrderHandler.order_queue.remove_order(order)
+        for order in OrderHandler.order_queue.get_orders():
+            if order.robot_serial == robot_serial:
+                print(f"Robot {model} {version} is now available")
+                OrderHandler.order_queue.remove_order(order)

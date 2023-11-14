@@ -8,5 +8,6 @@ class Order(models.Model):
     robot = models.ForeignKey(Robot, on_delete=models.CASCADE)
     order_date = models.DateTimeField(blank=False, null=False)
 
+
 class Meta:
     db_table = 'orders'

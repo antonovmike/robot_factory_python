@@ -1,4 +1,4 @@
-import logging
+# import logging
 
 from django.views import View
 from django.http import FileResponse
@@ -22,7 +22,8 @@ class ReportGenerator:
     def __init__(self):
         self.week_ago = timezone.now() - timezone.timedelta(weeks=1)
         self.robots = Robot.objects.filter(created__gte=self.week_ago)
-        self.data = self.robots.values('model', 'version').annotate(total=Count('model')).order_by('model', 'version')
+        self.data = self.robots.values('model', 'version').annotate(
+            total=Count('model')).order_by('model', 'version')
 
     def generate_report(self):
         return self.data
@@ -81,8 +82,8 @@ class RobotReportView(View):
 
         # FIX IT
         total_robots = Robot.objects.all().count()
-        # print(f"Total amount of robots on {timezone.now().date()} is {total_robots}")
-        logging.info(f"Total amount of robots on {timezone.now().date()} is {total_robots}")
+        print(f"Total amount of robots on {timezone.now().date()} is {total_robots}")
+        # logging.info(f"Total amount of robots on {timezone.now().date()} is {total_robots}")
 
         workbook_creator = WorkbookCreator(data)
         wb = workbook_creator.create_workbook()
